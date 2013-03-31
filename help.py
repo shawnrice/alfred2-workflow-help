@@ -7,6 +7,9 @@
 # To any pythoners out there who may read this script: this is probably atrocious code
 # but it's my first python script. Forgive me. Maybe join the github development 
 
+# Written by Shawn Patrick Rice
+# Post-release help from Clinxs (https://github.com/clintxs)
+
 import alp
 import re
 import os
@@ -27,6 +30,7 @@ file = open(location, "w")
 
 hotmod = {		131072 : "shift",
 				262144 : "control",
+				262401 : "control", # https://github.com/shawnrice/alfred2-workflow-help/pull/2/files
 				393216 : "shift+control",
 				524288 : "option",
 				655360 : "shift+option",
@@ -35,6 +39,7 @@ hotmod = {		131072 : "shift",
 				1048576 : "command",
 				1179648 : "shift+command",
 				1310720 : "control+command",
+				1310985 : "control+command", # https://github.com/shawnrice/alfred2-workflow-help/pull/2/files
 				1441792 : "shift+control+command",
 				1572864 : "option+command",
 				1703936 : "shift+option+command",
@@ -98,7 +103,10 @@ for item in dirs:
 					if hotkeys != "\t":
 						hotkeys += "\n\n"
 					if "hotmod" in item['config'] and item['config']['hotmod']:
-						hotkeys += "\r\n* " + hotmod[item['config']['hotmod']] + " " + item['config']['hotstring']
+						if item['config']['hotmod'] in hotmod:
+							hotkeys += "\r\n* " + hotmod[item['config']['hotmod']] + " " + item['config']['hotstring']
+						else:
+							hotkeys += "\r\n* <font color=\"red\">Error reading hotkey</font>: try re-entering the hotkey in Alfred's preferences"
 					else:
 						hotkeys += "\r\n* " + "<font color=\"red\">Not yet defined</font>" # Hotkeys have to be defined when a user installs a workflow
 					if item['config']['argument']:
