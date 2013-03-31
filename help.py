@@ -87,20 +87,17 @@ for item in dirs:
 				buffer +=  "\n"
 			
 			# Start to go through the objects to look for keywords, script filters, and hotkeys
-			commands = "\t"
-			hotkeys = "\t"
+			commands = ""
+			hotkeys = ""
 			for item in info['objects']:
 				if item['type'] == "alfred.workflow.input.keyword":		# Keywords
-					if commands == "\t":
-						commands = "\r\n* " + item['config']['keyword']
-					else:
-						commands += "\r\n* " + item['config']['keyword']
+					commands += "\r\n* `" + item['config']['keyword'] + "`"
 					if "text" in item['config']:
 						commands += " (" + item['config']['text'] + ")"
 					elif "subtext" in item['config']:
 						commands += " (" + item['config']['subtext'] + ")"
 				if item['type'] == "alfred.workflow.trigger.hotkey":	# Hotkeys
-					if hotkeys != "\t":
+					if hotkeys:
 						hotkeys += "\n\n"
 					if "hotmod" in item['config'] and item['config']['hotmod']:
 						if item['config']['hotmod'] in hotmod:
@@ -112,10 +109,7 @@ for item in dirs:
 					if item['config']['argument']:
 						hotkeys += " (Takes " + hotarg[item['config']['argument']] + " as an argument)"	# Give any argument information... this should be expanded to be more helpful					
 				if item['type'] == "alfred.workflow.input.scriptfilter":	# Keywords from script filters
-					if commands == "\t":
-						commands = "\r\n* " + item['config']['keyword']
-					else:
-						commands += "\r\n" + "* " + item['config']['keyword']
+					commands += "\r\n* `" + item['config']['keyword'] + "`"
 
 					# Grabs explanatory text and subtext. People don't seem to use these in any particular way in that one would be more descriptive than the other
 					# So, I'm not sure how to deal with problem to present the best information. This is the current solution that is probably not the best.
@@ -130,9 +124,9 @@ for item in dirs:
 			buffer += "\n\n" # Add in a few lines to separate the commands and hotkeys
 			
 			# Add in the markup for the commands and hotkeys together
-			if commands != "\t":						
+			if commands:						
 				buffer += "__Commands__\n" + commands
-			if hotkeys != "\t":
+			if hotkeys:
 				buffer += "\n\n__Hotkeys__\n" + hotkeys
 			
 			workflows[info['name']] = buffer # add into workflows dictionary with name as key and file markup as the content
