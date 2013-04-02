@@ -66,29 +66,43 @@ dirs = os.walk(listdir).next()[1]
 workflows = {} # empty dictionary to hold the individual workflow information
 
 for item in dirs:
-	if item != "alfred-help": # this is just for my debugging purposes and will disappear soon
-			plist = listdir + "/" + item + "/info.plist" # find the plist file
- 
- 			folder = item # the strange foldernames that Alfred assigns the workflows...
-			 
-			info = alp.readPlist(plist) # alp function
-			
-			# start to write the markup for the files 
-			
-			buffer = "<img src=\"file://localhost/" + listdir + item + "/icon.png\" height=\"50px\">      <font size=\"5em\"><b>" + info['name'] + "</b></font>\n<hr>"
-			buffer += "\n\n_(" + info['bundleid'] + ") by " + info['createdby'] + "_\n"
-			if "disabled" in info:
-				if info['disabled']:
-					buffer +=  " (<font color=\"red\">disabled</font>)\n" # Indicate that a workflow is disabled
+#	if item != "alfred-help": # this is just for my debugging purposes and will disappear soon
 
-			if info['description']: # Is the description present? Some people don't include these...
-				buffer +=  "######<font color=\"gray\">" + info['description'] + "</font>\n"
-			else:
-				buffer +=  "\n"
-			
-			# Start to go through the objects to look for keywords, script filters, and hotkeys
-			commands = ""
-			hotkeys = ""
+	plist = listdir + "/" + item + "/info.plist" # find the plist file
+	folder = item # the strange foldernames that Alfred assigns the workflows...
+
+	try:
+		info = alp.readPlist(plist) # alp function
+	
+		# start to write the markup for the files 
+	
+		buffer = "<img src=\"file://localhost/" + listdir + item + "/icon.png\" height=\"50px\">"
+		if "name" in info:
+			buffer += "<font size=\"5em\"><b>" + info['name'] + "</b></font>\n<hr>"
+		else:
+			info['name'] = "EMPTY NAME"
+			buffer += "<font size=\"5em\"><b>" + info['name'] + "</b></font>\n<hr>"
+		if "bundleid" in info:
+			buffer += "\n\n(" + info['bundleid'] + ")"
+		else:
+			buffer += "\n\n<font color=\"red\">NO BUNDLE ID DEFINED</font>"
+		if "createdby" in info:
+			buffer += " by " + info['createdby'] + "\n"
+		else:
+			buffer += " <font color=\"red\">NO CREATOR ID</font>\n"
+		if "disabled" in info:
+			if info['disabled']:
+				buffer +=  " (<font color=\"red\">disabled</font>)\n" # Indicate that a workflow is disabled
+
+		if info['description']: # Is the description present? Some people don't include these...
+			buffer +=  "######<font color=\"gray\">" + info['description'] + "</font>\n"
+		else:
+			buffer +=  "\n"
+	
+		# Start to go through the objects to look for keywords, script filters, and hotkeys
+		commands = ""
+		hotkeys = ""
+		if "objects" in info:
 			for item in info['objects']:
 				if item['type'] == "alfred.workflow.input.keyword":		# Keywords
 					if "keyword" in item['config']:
@@ -125,15 +139,18 @@ for item in dirs:
 					elif "title" in item['config']:
 						commands += " (" + item['config']['title'] + ")"
 
-			buffer += "\n\n" # Add in a few lines to separate the commands and hotkeys
-			
-			# Add in the markup for the commands and hotkeys together
-			if commands:						
-				buffer += "__Commands__\n" + commands
-			if hotkeys:
-				buffer += "\n\n__Hotkeys__\n" + hotkeys
-			
-			workflows[info['name']] = buffer # add into workflows dictionary with name as key and file markup as the content
+		buffer += "\n\n" # Add in a few lines to separate the commands and hotkeys
+	
+		# Add in the markup for the commands and hotkeys together
+		if commands:						
+			buffer += "__Commands__\n" + commands
+		if hotkeys:
+			buffer += "\n\n__Hotkeys__\n" + hotkeys
+	
+		workflows[info['name']] = buffer # add into workflows dictionary with name as key and file markup as the content
+		
+	except: # when the ALP doesn't work, usually because of no bundle id.
+		workflows[folder]= "The info.plist file for this is not very valid... ALP can't handle it. It probably doesn't have a bundleid. Check the metadata."
 
 buffer = "" # buffer to write for the file
 
