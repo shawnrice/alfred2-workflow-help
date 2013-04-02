@@ -91,7 +91,10 @@ for item in dirs:
 			hotkeys = ""
 			for item in info['objects']:
 				if item['type'] == "alfred.workflow.input.keyword":		# Keywords
-					commands += "\r\n* `" + item['config']['keyword'] + "`"
+					if "keyword" in item['config']:
+						commands += "\r\n* `" + item['config']['keyword'] + "`"
+					else:
+						commands += "\r\n* <font color=\"red\">No Keyword Defined</font>"
 					if "text" in item['config']:
 						commands += " (" + item['config']['text'] + ")"
 					elif "subtext" in item['config']:
@@ -109,7 +112,8 @@ for item in dirs:
 					if item['config']['argument']:
 						hotkeys += " (Takes " + hotarg[item['config']['argument']] + " as an argument)"	# Give any argument information... this should be expanded to be more helpful					
 				if item['type'] == "alfred.workflow.input.scriptfilter":	# Keywords from script filters
-					commands += "\r\n* `" + item['config']['keyword'] + "`"
+					if "keyword" in item['config']:
+						commands += "\r\n* `" + item['config']['keyword'] + "`"
 
 					# Grabs explanatory text and subtext. People don't seem to use these in any particular way in that one would be more descriptive than the other
 					# So, I'm not sure how to deal with problem to present the best information. This is the current solution that is probably not the best.
