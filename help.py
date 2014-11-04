@@ -57,7 +57,7 @@ hotaction = { 	0 : "Pass through to Workflow",
 				1 : "Show Alfred"
 }
 
-listdir = os.getcwd() + "/../" # there has to be a more elegant way to do this... 
+listdir = os.path.dirname(os.getcwd())
 # list of directories in the 
 
 dirs = os.walk(listdir).next()[1]
