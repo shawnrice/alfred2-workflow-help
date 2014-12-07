@@ -1,4 +1,11 @@
-### Workflows Help Workflow ###
+## Workflows Help Workflow ##
+
+### NOTE ###
+This is a really old workflow, the current "old" version can be downloaded from [Packal](http://www.packal.org) -- you can also find it in this repo. However, it does __not__ work with Yosemite.
+
+There is a quick fix hosted in this repo: [download](https://github.com/shawnrice/alfred2-workflow-help/blob/master/whw.alfredworkflow). It does have a different Bundle ID than the old one, so when I finally find the time to give the new one all the functionality that it needs, then it won't automatically update through the Packal Updater. Still, it's a fix until I find the time to get back to this project.
+
+------
 
 Currently, there is just one command: __help__.
 
